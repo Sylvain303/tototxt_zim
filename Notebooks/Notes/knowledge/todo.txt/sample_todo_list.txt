@@ -1,0 +1,24 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2022-02-18T06:11:20+01:00
+
+====== sample todo list ======
+Created vendredi 18 février 2022
+
+===== Voir aussi =====
+
+===== Content =====
+
+This page contain a sample todo list for beeing parsed.
+See discussion: https://github.com/vonshednob/pytodotxt/pull/6
+
+The following section contains the todo.txt like input wrapped in Zim's checkboxes
+
+===== Todo section =====
+[ ] write python wrapper to modify this todo by script
+[ ] select the good todo.txt python's lib
+[ ] have fun
+[ ] task containing "finish him" will be completed
+
+===== more section =====
+Can put some user's note not related to the todo here or more detail or whatever.

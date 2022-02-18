@@ -18,7 +18,9 @@ class ZimPage_todotxt:
         self.zim_page = zim_page
 
     def get_zim_filename(self):
-        return f"{Path(self.zim_notebook).expanduser()}/{self.zim_page.replace(':', '/')}.txt"
+        filename = self.zim_page.replace(':', '/')
+        filename = filename.replace(' ', '_')
+        return f"{Path(self.zim_notebook).expanduser()}/{filename}.txt"
 
     def _read_zim_lines(self):
         filename = self.get_zim_filename()
@@ -129,11 +131,11 @@ class ZimPage_todotxt:
 # ====================================================================== main
 Section_line = namedtuple('Section_line', ['lineno', 'txt'])
 
-zim_page = "Pro:Client:Cleandrop:01-travaux:10-encours"
-zim_notebook = "~/Notebooks/Notes"
+zim_page = "knowledge:todo.txt:sample todo list"
+zim_notebook = "./Notebooks/Notes"
 
 zim_todotxt = ZimPage_todotxt(zim_notebook, zim_page)
-zim_section = 'Commande matos'
+zim_section = 'Todo section'
 print(f"zim: {zim_todotxt.get_zim_filename()}")
 todos_zim_lines = zim_todotxt.get_todo_from_zimpage(zim_section)
 todos_zim_lines_raw = zim_todotxt.get_todo_from_zimpage_raw(zim_section)
@@ -149,14 +151,14 @@ print(todos_zim_lines_raw)
 
 todotxt_zim = TodoTxt_from_lines('zimtodo.txt', task_class=ZimTask)
 todotxt_zim.parse_from_lines(todos_zim_lines)
-todotxt_zim.add_task("nouvelle tasks")
+todotxt_zim.add_task("new tasks")
 
 print(f"================== parse_from_lines todotxt_zim list not completed: {len(todotxt_zim.tasks)}")
 for t in todotxt_zim.tasks:
     if not t.is_completed:
         print(f"{t.linenr}: {t.description}")
 
-    if 'multiprises atelier' in t.description:
+    if 'finish him' in t.description:
         t.set_completed()
         print(f"set_completed: {t.linenr}")
 
