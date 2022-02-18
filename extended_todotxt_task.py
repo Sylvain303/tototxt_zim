@@ -43,3 +43,20 @@ class ZimTask(pytodotxt.Task):
         result = f"[{zim_check_box_char}] {result}"
         return result
 
+    # setter for completed keep coupling with container parent if present
+    # can be used in loop:
+    #
+    #   for t in todotxt_zim.tasks:
+    #       if condition_met:
+    #           t.set_completed()
+    #           print(f"set_completed: {t.linenr}")
+    def set_completed(self, completed=True, completion_date=None):
+        self.is_completed = completed
+
+        if completion_date is not None:
+            self.completion_date = completion_date
+
+        # update parent item in tasks[]
+        if self.todotxt and self.linenr and self == self.todotxt.tasks[self.linenr]:
+            self.todotxt.tasks[self.linenr].is_completed = self.is_completed
+            self.todotxt.tasks[self.linenr].completion_date = self.completion_date
