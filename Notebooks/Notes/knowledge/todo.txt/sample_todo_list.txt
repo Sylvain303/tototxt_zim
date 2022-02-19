@@ -23,6 +23,7 @@ The following section contains the todo.txt like input wrapped in Zim's check-bo
 [ ] have fun
 [*] task containing "finish him" will be completed
 [ ] new tasks
+[ ] new tasks
 
 ===== Second todo section =====
 [ ] some more task @project2

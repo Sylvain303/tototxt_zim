@@ -105,6 +105,7 @@ class ZimPage_todotxt:
 
         if start_line == 0:
             # no content found
+            # or instead of leaving False we could replace the whole section?
             return False
 
         # no empty was found after start_line so assuming it ends
@@ -138,8 +139,8 @@ class ZimPage_todotxt:
                 del lines[i]
 
         # full page update output
-        for i, l in enumerate(lines):
-            print(f"{(i+1):02d} {l}")
+        #for i, l in enumerate(lines):
+        #    print(f"{(i+1):02d} {l}")
 
         # save back to the file
         filename = self.get_zim_filename()
