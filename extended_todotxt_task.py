@@ -53,6 +53,9 @@ class ZimTask(pytodotxt.Task):
     def set_completed(self, completed=True, completion_date=None):
         self.is_completed = completed
 
+        # completed can be True without completion_date
+        # But could completed be Fasle with a completion_date?
+        # Or should we remove completion_date when completed is set to Fasle?
         if completion_date is not None:
             self.completion_date = completion_date
 

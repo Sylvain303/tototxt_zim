@@ -32,8 +32,10 @@ class ZimPage_todotxt:
         lines = self._read_zim_lines()
         section_found = False
         todos = []
+        section_match = re.compile(f'^=+ {section} =+$')
         for l in lines:
-            if section in l:
+            # section detection start
+            if not section_found and section_match.match(l):
                 section_found = True
                 continue
             if section_found and l.startswith('==='):
@@ -44,7 +46,8 @@ class ZimPage_todotxt:
                     l = match_filter(l)
                 if l is not None:
                     todos.append(l)
-        return todos
+
+        return section_found, todos
 
     def _extract_todo_from_zim_checkbox(self, line):
         m = self.__class__.MATCH_TODO_RE.match(line)
@@ -83,7 +86,8 @@ class ZimPage_todotxt:
         lines = self._read_zim_lines()
         section_lines = self._match_zim_section(section, lines)
 
-        # seek non empty line for replace
+        # seek first non empty line for replace the continuous
+        # block of lines
         start_line = 0
         end_line = 0
         for sl in section_lines:
@@ -99,16 +103,23 @@ class ZimPage_todotxt:
                 # found an empty line stop
                 break
 
+        if start_line == 0:
+            # no content found
+            return False
+
+        # no empty was found after start_line so assuming it ends
+        # on the last line
         if end_line == 0:
             end_line = section_lines[-1].lineno
 
         #print(f"{start_line}, {end_line} -------- replace with:")
+
+        # replace loop, will replace actual zim page lines
+        # within start_line to end_line with the new content
         nb_task = len(todotxt.tasks)
-        new_lines = []
         i = start_line
         for t in todotxt.tasks:
             txt = str(t)
-
             # update lines
             if i <= end_line:
                 # replace
@@ -118,6 +129,7 @@ class ZimPage_todotxt:
                 lines.insert(i-1, txt)
             i += 1
 
+        # compare if we are saving fewer lines than it was into de zim page
         pos_last_updated_task = start_line + nb_task -1
         if pos_last_updated_task < end_line:
             # remove extra size lines
@@ -125,20 +137,35 @@ class ZimPage_todotxt:
                 print(f"remove line {i+1}")
                 del lines[i]
 
+        # full page update output
         for i, l in enumerate(lines):
             print(f"{(i+1):02d} {l}")
 
+        # save back to the file
+        filename = self.get_zim_filename()
+        # we call our mofified TodoTxt with get_text_lines()
+        todotxt.save(target=filename, safe=True, lines=lines)
+
+        return True
+
 # ====================================================================== main
+# out type to store extrated section from zim page with _extract_todo_from_zim_checkbox()
 Section_line = namedtuple('Section_line', ['lineno', 'txt'])
 
+# out config
 zim_page = "knowledge:todo.txt:sample todo list"
 zim_notebook = "./Notebooks/Notes"
 
 zim_todotxt = ZimPage_todotxt(zim_notebook, zim_page)
 zim_section = 'Todo section'
 print(f"zim: {zim_todotxt.get_zim_filename()}")
-todos_zim_lines = zim_todotxt.get_todo_from_zimpage(zim_section)
-todos_zim_lines_raw = zim_todotxt.get_todo_from_zimpage_raw(zim_section)
+section_found, todos_zim_lines_raw = zim_todotxt.get_todo_from_zimpage_raw(zim_section)
+if not section_found:
+    print(f"section not found: {zim_section}, exiting")
+    sys.exit(1)
+
+section_found, todos_zim_lines = zim_todotxt.get_todo_from_zimpage(zim_section)
+
 
 print(todos_zim_lines)
 print(todos_zim_lines_raw)
