@@ -6,19 +6,27 @@ Creation-Date: 2022-02-18T06:11:20+01:00
 Created vendredi 18 février 2022
 
 ===== Voir aussi =====
+[[GTD:Inbox]]
+[[todo.txt]]
 
 ===== Content =====
 
-This page contain a sample todo list for beeing parsed.
+This page contain a sample todo list for being parsed.
 See discussion: https://github.com/vonshednob/pytodotxt/pull/6
 
-The following section contains the todo.txt like input wrapped in Zim's checkboxes
+The following section contains the todo.txt like input wrapped in Zim's check-boxes
 
 ===== Todo section =====
+
 [ ] write python wrapper to modify this todo by script
 [ ] select the good todo.txt python's lib
 [ ] have fun
-[ ] task containing "finish him" will be completed
+[*] task containing "finish him" will be completed
+[ ] new tasks
+
+===== Second todo section =====
+[ ] some more task @project2
+[ ] what to do with a second section?
 
 ===== more section =====
 Can put some user's note not related to the todo here or more detail or whatever.

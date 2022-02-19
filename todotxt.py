@@ -93,13 +93,13 @@ class ZimPage_todotxt:
         for sl in section_lines:
             #print(f"actual lines: {sl}")
             n = len(sl.txt)
-            if start_line == 0 and n > 0:
+            if start_line == 0 and n > 0 and self.__class__.MATCH_TODO_RE.match(sl.txt):
                 start_line = sl.lineno
                 continue
             if start_line > 0 and n > 0:
                 # increase end_line to the current line
                 end_line = sl.lineno
-            if n == 0:
+            if start_line > 0 and n == 0:
                 # found an empty line stop
                 break
 
@@ -190,5 +190,8 @@ for t in todotxt_zim.tasks:
         print(f"set_completed: {t.linenr}")
 
 #del todotxt_zim.tasks[-1]
-zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim)
+if not zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim):
+    print(f"error: writing outout to {zim_todotxt.get_zim_filename()}")
+
+# still save as normal todo.txt too
 todotxt_zim.save()
