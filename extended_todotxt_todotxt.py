@@ -39,16 +39,17 @@ class TodoTxt_from_lines(pytodotxt.TodoTxt):
         task = self.task_class(line.strip(), linenr=linenr, todotxt=self)
         self.tasks.append(task)
 
+    # We redefine get_text_lines() so we can override lines if get_lines_once is set.
+    # Used to call our save() with lines as extra argument.
     def get_text_lines(self):
-        """Get all Task as list on lines (str)
+        """Get all Task as list of lines (str)
         """
         if self.get_lines_once is not None:
             lines = self.get_lines_once
             self.get_lines_once = None
             return lines
         else:
-            return [str(task) for task in
-                     sorted(self.tasks, key=lambda t: t.linenr if t.linenr is not None else len(self.tasks))]
+            return super().get_text_lines()
 
     def save(self, target=None, safe=True, linesep=None, lines=None):
         if lines is not None:
