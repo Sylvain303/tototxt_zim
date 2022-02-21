@@ -18,7 +18,8 @@ sys.path.insert(0,'./vendor/pytodotxt')
 # this code is based on pytodotxt from https://github.com/vonshednob/pytodotxt
 import pytodotxt
 from extended_todotxt_task import ZimTask
-from extended_todotxt_todotxt import TodoTxt_from_lines
+#from extended_todotxt_todotxt import TodoTxt_from_lines
+from extended_todotxt_todotxtparser import TodoTxtParser_from_lines
 from zimpage_todotxt import ZimPage_todotxt
 
 # ====================================================================== main
@@ -51,9 +52,11 @@ print(todos_zim_lines_raw)
 #    if not task.is_completed:
 #        print(task.description)
 
-todotxt_zim = TodoTxt_from_lines('zimtodo.txt', task_class=ZimTask)
-todotxt_zim.parse_from_lines(todos_zim_lines)
-todotxt_zim.add_task("new tasks")
+todotxt_zim = pytodotxt.TodoTxt('zimtodo.txt', parser=TodoTxtParser_from_lines(task_type=ZimTask))
+# parse our lines buffer through the extended TodoTxtParser_from_lines class
+todotxt_zim.parse(todos_zim_lines)
+
+todotxt_zim.add(ZimTask("new tasks"))
 
 print(f"================== parse_from_lines todotxt_zim list not completed: {len(todotxt_zim.tasks)}")
 for t in todotxt_zim.tasks:
@@ -61,14 +64,17 @@ for t in todotxt_zim.tasks:
         print(f"{t.linenr}: {t.description}")
 
     if 'finish him' in t.description:
-        t.set_completed()
+        t.is_completed = True
         print(f"set_completed: {t.linenr}")
 
 #del todotxt_zim.tasks[-1]
 
-# save modified zim page
-if not zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim):
-    print(f"error: writing outout to {zim_todotxt.get_zim_filename()}")
+## save modified zim page
+#if not zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim):
+#    print(f"error: writing outout to {zim_todotxt.get_zim_filename()}")
+
+for r in todotxt_zim.lines:
+    print(l)
 
 ## for debug purpose we can still save as normal todo.txt too (will use TodoTxt filename argument)
 #todotxt_zim.save()
