@@ -73,7 +73,7 @@ for t in todotxt_zim.tasks:
 #if not zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim):
 #    print(f"error: writing outout to {zim_todotxt.get_zim_filename()}")
 
-for r in todotxt_zim.lines:
+for l in todotxt_zim.lines:
     print(l)
 
 ## for debug purpose we can still save as normal todo.txt too (will use TodoTxt filename argument)
