@@ -7,13 +7,14 @@ import pytodotxt
 import re
 
 class TodoTxt_from_lines(pytodotxt.TodoTxt):
-    def __init__(self, filename=None, encoding='utf-8', task_class=None):
+    def __init__(self, filename=None, encoding='utf-8', parser=None):
         if filename is None:
             filename = '/dev/null'
         # allow to force lines content on save()
         self.get_lines_once = None
-        super().__init__(filename, encoding, task_class)
+        super().__init__(filename, encoding, parser)
 
+    # replace TodoTxt.parse() which only handle its own filename
     def parse_from_lines(self, lines, filter_func=None):
         """(Re)parse an input from list of line of text
         used by parse()
@@ -29,19 +30,13 @@ class TodoTxt_from_lines(pytodotxt.TodoTxt):
 
             if len(line.strip()) == 0:
                 continue
-            self.add_task(line, linenr)
+            self.tasks.append(self.parser.task_type(line, linenr))
 
         return self.tasks
 
-    def add_task(self, line, linenr=None):
-        if linenr is None:
-            linenr = len(self.tasks)
-        task = self.task_class(line.strip(), linenr=linenr, todotxt=self)
-        self.tasks.append(task)
-
-    # We redefine get_text_lines() so we can override lines if get_lines_once is set.
+    # Our lines() allows to override input list with our lines if get_lines_once is set.
     # Used to call our save() with lines as extra argument.
-    def get_text_lines(self):
+    def lines(self):
         """Get all Task as list of lines (str)
         """
         if self.get_lines_once is not None:
@@ -49,8 +44,9 @@ class TodoTxt_from_lines(pytodotxt.TodoTxt):
             self.get_lines_once = None
             return lines
         else:
-            return super().get_text_lines()
+            return super().lines()
 
+    # wrapper TodoTxt.save() with lines as input if lines argument is given
     def save(self, target=None, safe=True, linesep=None, lines=None):
         if lines is not None:
             self.get_lines_once = lines

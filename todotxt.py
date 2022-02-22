@@ -16,9 +16,9 @@ import sys
 sys.path.insert(0,'./vendor/pytodotxt')
 
 # this code is based on pytodotxt from https://github.com/vonshednob/pytodotxt
-import pytodotxt
+#import pytodotxt
 from extended_todotxt_task import ZimTask
-#from extended_todotxt_todotxt import TodoTxt_from_lines
+from extended_todotxt_todotxt import TodoTxt_from_lines
 from extended_todotxt_todotxtparser import TodoTxtParser_from_lines
 from zimpage_todotxt import ZimPage_todotxt
 
@@ -52,9 +52,9 @@ print(todos_zim_lines_raw)
 #    if not task.is_completed:
 #        print(task.description)
 
-todotxt_zim = pytodotxt.TodoTxt('zimtodo.txt', parser=TodoTxtParser_from_lines(task_type=ZimTask))
+todotxt_zim = TodoTxt_from_lines('zimtodo.txt', parser=TodoTxtParser_from_lines(task_type=ZimTask))
 # parse our lines buffer through the extended TodoTxtParser_from_lines class
-todotxt_zim.parse(todos_zim_lines)
+todotxt_zim.parse_from_lines(todos_zim_lines)
 
 todotxt_zim.add(ZimTask("new tasks"))
 
@@ -73,8 +73,9 @@ for t in todotxt_zim.tasks:
 #if not zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim):
 #    print(f"error: writing outout to {zim_todotxt.get_zim_filename()}")
 
+# for debug purpose we can still save as normal todo.txt too (will use TodoTxt filename argument)
+todotxt_zim.save()
+
 for l in todotxt_zim.lines:
     print(l)
 
-## for debug purpose we can still save as normal todo.txt too (will use TodoTxt filename argument)
-#todotxt_zim.save()
