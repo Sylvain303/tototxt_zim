@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import re
+import io
 from pathlib import Path
 from collections import namedtuple
 
@@ -7,24 +8,28 @@ from collections import namedtuple
 Section_line = namedtuple('Section_line', ['lineno', 'txt'])
 
 class ZimPage_todotxt:
-    MATCH_TODO_RE = re.compile(r'^\[(.)\] (.+)')
+    MATCH_TODO_RE = re.compile(r'^\[(.)\] (.+\n?)')
     def __init__(self, zim_notebook, zim_page):
         self.zim_notebook = zim_notebook
         self.zim_page = zim_page
+        self.tasks = []
 
     def get_zim_filename(self):
         filename = self.zim_page.replace(':', '/')
         filename = filename.replace(' ', '_')
         return f"{Path(self.zim_notebook).expanduser()}/{filename}.txt"
 
-    def _read_zim_lines(self):
+    def _read_zim_lines(self, strip_lines=True):
         filename = self.get_zim_filename()
         with open(filename) as f:
-           lines = [ l.strip() for l in f.readlines() ]
+            if strip_lines:
+               lines = [ l.strip() for l in f.readlines() ]
+            else:
+                lines = f.readlines()
         return lines
 
-    def get_todo_from_zimpage_raw(self, section, match_filter=None):
-        lines = self._read_zim_lines()
+    def get_todo_from_zimpage_raw(self, section, match_filter=None, strip_lines=True):
+        lines = self._read_zim_lines(strip_lines)
         section_found = False
         todos = []
         section_match = re.compile(f'^=+ {section} =+$')
@@ -66,7 +71,7 @@ class ZimPage_todotxt:
         for nr, l in enumerate(lines):
             if section in l:
                 section_found = True
-                print("section", l.strip())
+                #print("section", l.strip())
                 continue
             if section_found and l.startswith('==='):
                 section_found = False
@@ -143,3 +148,15 @@ class ZimPage_todotxt:
         todotxt.save(target=filename, safe=True, lines=lines)
 
         return True
+
+    def get_todo_as_StringIO(self, section):
+        io_buffer = io.StringIO()
+        section_found, lines = self.get_todo_from_zimpage_raw(section, self._extract_todo_from_zim_checkbox, strip_lines=False)
+        if not section_found:
+            return io_buffer
+
+        for l in lines:
+            io_buffer.write(l)
+        # rewind
+        io_buffer.seek(0)
+        return io_buffer

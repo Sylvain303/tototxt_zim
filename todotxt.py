@@ -16,11 +16,12 @@ import sys
 sys.path.insert(0,'./vendor/pytodotxt')
 
 # this code is based on pytodotxt from https://github.com/vonshednob/pytodotxt
-#import pytodotxt
+import pytodotxt
 from extended_todotxt_task import ZimTask
-from extended_todotxt_todotxt import TodoTxt_from_lines
-from extended_todotxt_todotxtparser import TodoTxtParser_from_lines
+#from extended_todotxt_todotxt import TodoTxt_from_lines
+#from extended_todotxt_todotxtparser import TodoTxtParser_from_lines
 from zimpage_todotxt import ZimPage_todotxt
+from time import strftime,localtime
 
 # ====================================================================== main
 
@@ -52,30 +53,23 @@ print(todos_zim_lines_raw)
 #    if not task.is_completed:
 #        print(task.description)
 
-todotxt_zim = TodoTxt_from_lines('zimtodo.txt', parser=TodoTxtParser_from_lines(task_type=ZimTask))
-# parse our lines buffer through the extended TodoTxtParser_from_lines class
-todotxt_zim.parse_from_lines(todos_zim_lines)
+todo_parser = pytodotxt.TodoTxtParser(task_type=ZimTask)
+io_buffer = zim_todotxt.get_todo_as_StringIO(zim_section)
+list_of_tasks = todo_parser.parse(io_buffer)
+now = strftime("%Y-%m-%d %H:%M:%S", localtime())
+list_of_tasks.append(ZimTask(f"new task {now}"))
 
-todotxt_zim.add(ZimTask("new tasks"))
-
-print(f"================== parse_from_lines todotxt_zim list not completed: {len(todotxt_zim.tasks)}")
-for t in todotxt_zim.tasks:
+print(f"================== list of tasks not completed: {len(list_of_tasks)}")
+for t in list_of_tasks:
     if not t.is_completed:
         print(f"{t.linenr}: {t.description}")
 
     if 'finish him' in t.description:
         t.is_completed = True
-        print(f"set_completed: {t.linenr}")
+        print(f"set_completed: {t.linenr} {t.description}")
 
-#del todotxt_zim.tasks[-1]
+#del list_of_tasks[-1]
 
 ## save modified zim page
-#if not zim_todotxt.save_todos_into_zimpage(zim_section, todotxt_zim):
+#if not zim_todotxt.save_todos_into_zimpage(zim_section, list_of_tasks):
 #    print(f"error: writing outout to {zim_todotxt.get_zim_filename()}")
-
-# for debug purpose we can still save as normal todo.txt too (will use TodoTxt filename argument)
-todotxt_zim.save()
-
-for l in todotxt_zim.lines:
-    print(l)
-
