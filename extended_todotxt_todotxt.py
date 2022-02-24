@@ -34,7 +34,7 @@ class TodoTxt_from_lines(pytodotxt.TodoTxt):
 
         return self.tasks
 
-    # Our build_lines() allows to override input list with our own lines if get_lines_once is set.
+    # override build_lines() allows to override input list with our own lines if get_lines_once is set.
     # Used to call our extended save() with lines as extra argument.
     def build_lines(self):
         """Get all Task as list of lines (str)
