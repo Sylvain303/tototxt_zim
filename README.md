@@ -4,6 +4,8 @@ add todo.txt format managed / viewed in [Zim wiki](https://www.zim-wiki.org/)
 
 This is an early Draft and prototype
 
+## requirements
+
 I use a local modified copy of https://github.com/vonshednob/pytodotxt/
 
 our modified version => https://github.com/Sylvain303/pytodotxt
@@ -13,6 +15,8 @@ cloned in 'vendor/' folder
 ```
 cd vendor
 git clone git@github.com:Sylvain303/pytodotxt.git
+# local install of our local version of the lib
+pip install .
 ```
 
 

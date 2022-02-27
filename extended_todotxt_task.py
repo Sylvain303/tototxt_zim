@@ -1,8 +1,4 @@
 #!/usr/bin/env python
-import sys
-# force our version
-sys.path.insert(0,'./vendor/pytodotxt')
-
 import pytodotxt
 import re
 
@@ -10,6 +6,7 @@ class ZimTask(pytodotxt.Task):
     MATCH_TODO_RE = re.compile(r'^\[(.)\] (.+)')
     def __init__(self, line=None, linenr=None, todotxt=None):
         self.zim_check_box_char = None
+        self.is_active = False
         super().__init__(line, linenr, todotxt)
 
     def parse(self, line):
@@ -25,23 +22,35 @@ class ZimTask(pytodotxt.Task):
                 line = f"x {txt}"
             else:
                 line = txt
+
+            if status_char == ' ':
+                self.zim_check_box_char = 'space'
+            elif status_char == '>':
+                self.is_active = True
+                #print(f"ACTIVE: {txt}")
         # parse
         super().parse(line)
+        #if self.is_active:
+        #    print(f"ACTIVE after super().parse: {self}")
+
 
     # output to string
     def __str__(self):
-        result = super().__str__()
+        zim_check_box_char = self.zim_check_box_char
+        if self.zim_check_box_char is None or self.zim_check_box_char == 'space':
+            zim_check_box_char = ' '
+
+        task_str = super().__str__()
         if self.is_completed:
             self.zim_check_box_char = '*'
             # remove is_completed 'x ' prefix
-            result = result[2:]
+            task_str = task_str[2:]
 
-        zim_check_box_char = self.zim_check_box_char
-        if self.zim_check_box_char is None:
+        if not self.is_active and self.zim_check_box_char == '>':
             zim_check_box_char = ' '
 
-        result = f"[{zim_check_box_char}] {result}"
-        return result
+        task_str = f"[{zim_check_box_char}] {task_str}"
+        return task_str
 
     # setter for completed keep coupling with container parent if present
     # can be used in loop:
@@ -63,3 +72,4 @@ class ZimTask(pytodotxt.Task):
         if self.todotxt and self.linenr and self == self.todotxt.tasks[self.linenr]:
             self.todotxt.tasks[self.linenr].is_completed = self.is_completed
             self.todotxt.tasks[self.linenr].completion_date = self.completion_date
+

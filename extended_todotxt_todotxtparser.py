@@ -1,8 +1,4 @@
 #!/usr/bin/env python
-import sys
-# force our version
-sys.path.insert(0,'./vendor/pytodotxt')
-
 import pytodotxt
 
 class TodoTxtParser_from_lines(pytodotxt.TodoTxtParser):

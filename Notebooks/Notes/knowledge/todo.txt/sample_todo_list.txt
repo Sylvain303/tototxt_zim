@@ -16,14 +16,21 @@ See discussion: https://github.com/vonshednob/pytodotxt/pull/6
 
 The following section contains the todo.txt like input wrapped in Zim's check-boxes
 
-===== Todo section =====
+===== Todo config =====
+Todo parsable section
 
-[ ] write python wrapper to modify this todo by script
+===== Todo parsable section =====
+
+[>] la tâche en cours au top
+[ ] have fun next:active
+[ ] remonter la next (ping et hop à remonte en 2nd, combien de fois?)
+[ ] lister les tâches ? (shell ou dans zim, un popup de Zim à la bonne page?)
+[ ] reminder tâche en cours (popup linux)
+[ ] délégation ? comment suggérer de déléguer une task ?
 [ ] select the good todo.txt python's lib
-[ ] have fun
+[ ] new tasks
+[*] write python wrapper to modify this todo by script
 [*] task containing "finish him" will be completed
-[ ] new tasks
-[ ] new tasks
 
 ===== Second todo section =====
 [ ] some more task @project2
